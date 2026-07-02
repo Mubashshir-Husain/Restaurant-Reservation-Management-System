@@ -1,9 +1,21 @@
 {
+  "name": "restaurant-reservation-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed": "node seed.js"
+  },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-validator": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.7.3",
+    "morgan": "^1.10.0",
     "nodemon": "^3.1.14"
   }
 }
