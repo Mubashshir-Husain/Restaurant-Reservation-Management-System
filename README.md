@@ -27,6 +27,11 @@ BistroReserve is a full-stack, professional web application designed for premium
 *   **Admin Passcode Gate:** Restricts administrator signups using a secure passcode verification key.
 *   **JWT Session Authorization:** Stateless cookie-based header tokens securing administrative actions.
 
+### 5. Automated Email Communications (Nodemailer)
+*   **Confirmation Mails:** Guests receive an immediate HTML-styled confirmation email upon booking.
+*   **24-Hour Reminders:** A background worker scans the database and sends reminder emails 24 hours before reservation time.
+*   **Developer Fallback (Ethereal):** If no SMTP settings are configured in `.env`, the system automatically provisions an Ethereal SMTP account and logs test-mail URLs in the console for instant browser previewing.
+
 ---
 
 ## 🛠️ Tech Stack
@@ -36,7 +41,7 @@ BistroReserve is a full-stack, professional web application designed for premium
 *   **Framework:** Express.js
 *   **Database:** MongoDB via Mongoose ODM
 *   **Security:** JSON Web Tokens (JWT) & BcryptJS password hashing
-*   **Validation:** Express-Validator
+*   **Mailing:** Nodemailer & Ethereal SMTP
 
 ### Frontend
 *   **Library:** React (Vite environment)
@@ -53,7 +58,7 @@ BistroReserve is a full-stack, professional web application designed for premium
 ### 1. Prerequisites
 Ensure you have the following installed locally:
 *   [Node.js](https://nodejs.org/) (v18+)
-*   [MongoDB](https://www.mongodb.com/) (Running locally on default port `27017`)
+*   [MongoDB](https://www.mongodb.com/) (Running locally on default port `27017` or a cloud-hosted URI)
 
 ---
 
@@ -67,13 +72,20 @@ Ensure you have the following installed locally:
     ```bash
     npm install
     ```
-3.  Configure environment variables by creating/checking the `.env` file:
+3.  Configure environment variables by creating a `.env` file in the `Backend` directory:
     ```env
-    PORT=----
-    MONGO_URI=mongodb://localhost:27017/---------
-    JWT_SECRET=--------------------------
+    PORT=5500
+    MONGO_URI=<YOUR_MONGODB_URI>
+    JWT_SECRET=<YOUR_JWT_SECRET_KEY>
     JWT_EXPIRES_IN=7d
-    ADMIN_SECRET_KEY=-----------
+    ADMIN_SECRET_KEY=<YOUR_ADMIN_REGISTRATION_PASSCODE>
+
+    # Optional Custom SMTP settings (Fallback utilizes Ethereal SMTP)
+    SMTP_HOST=<YOUR_SMTP_SERVER>
+    SMTP_PORT=<YOUR_SMTP_PORT>
+    SMTP_USER=<YOUR_SMTP_USERNAME_EMAIL>
+    SMTP_PASS=<YOUR_SMTP_PASSWORD>
+    SMTP_FROM="BistroReserve" <YOUR_SENDER_EMAIL>
     ```
 4.  Seed the reference restaurant tables:
     ```bash
@@ -97,9 +109,9 @@ Ensure you have the following installed locally:
     ```bash
     npm install
     ```
-3.  Configure environment variables by checking the `.env` file:
+3.  Configure environment variables by creating a `.env` file in the `Frontend` directory:
     ```env
-    VITE_API_URL=http://localhost:5500/api
+    VITE_API_URL=<YOUR_BACKEND_SERVER_API_ENDPOINT>
     VITE_MEAL_API_URL=https://www.themealdb.com/api/json/v1/1
     ```
 4.  Launch the Vite development server:
@@ -116,17 +128,18 @@ Ensure you have the following installed locally:
 1.  Go to Sign Up (`/register`).
 2.  Change Account Type to **Administrator**. An **Admin Security Passcode** field will display.
 3.  Enter an incorrect passcode -> submit -> expect error: `"Invalid Admin Security Key"`.
-4.  Enter the correct passcode `------` -> submit -> success! You are logged in and redirected to the Admin dashboard.
+4.  Enter the correct passcode configured as `ADMIN_SECRET_KEY` -> submit -> success! You are logged in and redirected to the Admin dashboard.
 
 ### Test Scenario B: Single-Admin Constraint
 1.  Log out of the administrator account.
 2.  Go back to Sign Up (`/register`).
-3.  Try to register a *second* account with "Administrator" role and passcode `admin123`.
+3.  Try to register a *second* account with "Administrator" role and your correct passcode.
 4.  Submit -> expect error: `"An administrator account already exists. Only one admin is allowed."`
 
-### Test Scenario C: Making a Reservation
+### Test Scenario C: Table Reservation & Email Logging
 1.  Register a standard **Customer** account.
 2.  Go to **Menu**, click any dish (e.g. *Matar Paneer*).
 3.  In the detail view, click **Book Dinner Session** to redirect to the booking workspace.
 4.  Select date, time slot, and guest count -> click **Check Availability**.
-5.  Choose a table (or *Auto-Assign*) and click **Confirm Reservation**. The booking appears in the personal list.
+5.  Choose a table (or *Auto-Assign*) and click **Confirm Reservation**.
+6.  Check the backend console. You will see a success log with an **Ethereal email preview link** (if not using custom SMTP) allowing you to inspect the HTML confirmation sent to your registered guest.

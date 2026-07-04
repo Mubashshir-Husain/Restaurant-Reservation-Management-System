@@ -213,11 +213,11 @@ export default function Home() {
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <MapPin className="h-5 w-5 text-emerald-600" />
-                <span className="text-slate-700 text-sm">124 Gastronomy Way, Sector 5, New Delhi</span>
+                <span className="text-slate-700 text-sm"> Sector 5, New Delhi</span>
               </div>
               <div className="flex items-center gap-3">
                 <PhoneCall className="h-5 w-5 text-emerald-600" />
-                <span className="text-slate-700 text-sm">+91 98765 43210</span>
+                <span className="text-slate-700 text-sm">+91 98765 ****</span>
               </div>
               <div className="flex items-center gap-3">
                 <Clock className="h-5 w-5 text-emerald-600" />

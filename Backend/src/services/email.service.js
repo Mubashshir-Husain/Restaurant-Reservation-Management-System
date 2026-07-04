@@ -19,7 +19,7 @@ const getTransporter = async () => {
         pass: process.env.SMTP_PASS,
       },
     });
-    console.log('[Email] Configured custom SMTP transport.');
+    console.log('Email Configured custom SMTP transport.');
   } else {
     // Ethereal Fallback for local testing
     try {
@@ -33,10 +33,10 @@ const getTransporter = async () => {
           pass: testAccount.pass,
         },
       });
-      console.log('[Email] Configured fallback Ethereal SMTP transport.');
-      console.log(`[Email] Ethereal Credentials: User=${testAccount.user}, Pass=${testAccount.pass}`);
+      console.log('Email Configured fallback Ethereal SMTP transport.');
+      console.log(`Email Ethereal Credentials: User=${testAccount.user}, Pass=${testAccount.pass}`);
     } catch (err) {
-      console.error('[Email] Failed to configure Ethereal transport:', err.message);
+      console.error('Email Failed to configure Ethereal transport:', err.message);
     }
   }
   return transporter;
