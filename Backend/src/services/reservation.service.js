@@ -1,6 +1,8 @@
 import Reservation from '../Models/Reservation.js';
 import Table from '../Models/Table.js';
+import User from '../Models/user.js';
 import ApiError from '../utils/ApiError.js';
+import { sendBookingConfirmation } from './email.service.js';
 import {
   SLOT_DURATION_MINUTES,
   RESERVATION_STATUS,
@@ -87,6 +89,11 @@ const createReservation = async ({ userId, date, timeSlot, guests, tableId }) =>
   }
 
   try {
+    // Determine if booking is within 24 hours to prevent duplicate reminders
+    const [hours, minutes] = timeSlot.split(':');
+    const resDateTime = new Date(`${date}T${hours}:${minutes}:00`);
+    const isWithin24Hours = (resDateTime.getTime() - Date.now()) <= 24 * 60 * 60 * 1000;
+
     const reservation = await Reservation.create({
       user: userId,
       table: table._id,
@@ -94,8 +101,18 @@ const createReservation = async ({ userId, date, timeSlot, guests, tableId }) =>
       timeSlot,
       guests,
       status: RESERVATION_STATUS.CONFIRMED,
+      reminderSent: isWithin24Hours,
     });
-    return reservation.populate('table');
+
+    const populated = await reservation.populate('table');
+    
+    // Fetch user details to send booking confirmation email
+    const user = await User.findById(userId);
+    if (user && user.email) {
+      sendBookingConfirmation(user.email, user.name, populated);
+    }
+
+    return populated;
   } catch (err) {
     // Race condition safety net: the partial unique index on the model
     // rejects a concurrent duplicate booking even if our earlier check

@@ -35,6 +35,10 @@ const reservationSchema = new mongoose.Schema(
       enum: [RESERVATION_STATUS.CONFIRMED, RESERVATION_STATUS.CANCELLED],
       default: RESERVATION_STATUS.CONFIRMED,
     },
+    reminderSent: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
