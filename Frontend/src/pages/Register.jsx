@@ -1,0 +1,257 @@
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, Link } from 'react-router-dom';
+import { registerUser, clearError } from '../store/slices/authSlice.js';
+import { User, Lock, Mail, Utensils, AlertCircle, ShieldAlert } from 'lucide-react';
+import Spinner from '../components/Spinner.jsx';
+
+export default function Register() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error, token } = useSelector((state) => state.auth);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: 'customer',
+    adminSecret: '',
+  });
+
+  const [validationErrors, setValidationErrors] = useState({});
+
+  useEffect(() => {
+    if (token) {
+      navigate('/');
+    }
+    return () => {
+      dispatch(clearError());
+    };
+  }, [token, navigate, dispatch]);
+
+  const validate = () => {
+    const errors = {};
+    if (!formData.name.trim()) {
+      errors.name = 'Full name is required';
+    }
+    if (!formData.email) {
+      errors.email = 'Email address is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = 'Please provide a valid email';
+    }
+    if (!formData.password) {
+      errors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    }
+    if (formData.role === 'admin' && !formData.adminSecret.trim()) {
+      errors.adminSecret = 'Admin Security Passcode is required';
+    }
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (validationErrors[e.target.name]) {
+      setValidationErrors({ ...validationErrors, [e.target.name]: '' });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+    dispatch(registerUser(formData));
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden bg-slate-50">
+      {/* Background Accents */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 rounded-full blur-[120px]" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-slate-200/50 rounded-full blur-[120px]" />
+
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo and Welcome */}
+        <div className="flex flex-col items-center mb-6">
+          <div className="bg-emerald-500/10 p-3 rounded-2xl border border-emerald-500/20 mb-3 shadow-lg shadow-emerald-500/5">
+            <Utensils className="h-8 w-8 text-emerald-600" />
+          </div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            Create Account
+          </h1>
+          <p className="text-slate-500 text-sm mt-2">
+            Join BistroReserve to book and manage your restaurant tables
+          </p>
+        </div>
+
+        {/* Form Container */}
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-8 shadow-xl backdrop-blur-md">
+          {error && (
+            <div className="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl flex items-start gap-3 text-sm animate-shake">
+              <AlertCircle className="h-5 w-5 flex-shrink-0 text-rose-500" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name Field */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                Full Name
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                  <User className="h-4 w-4" />
+                </span>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="John Doe"
+                  className={`w-full bg-slate-50 border ${
+                    validationErrors.name ? 'border-rose-500' : 'border-slate-200'
+                  } rounded-xl py-3 pl-10 pr-4 text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 transition-all duration-300 text-sm`}
+                />
+              </div>
+              {validationErrors.name && (
+                <p className="text-rose-600 text-xs mt-1 flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-rose-500" />
+                  {validationErrors.name}
+                </p>
+              )}
+            </div>
+
+            {/* Email Field */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                Email Address
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                  <Mail className="h-4 w-4" />
+                </span>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="john@example.com"
+                  className={`w-full bg-slate-50 border ${
+                    validationErrors.email ? 'border-rose-500' : 'border-slate-200'
+                  } rounded-xl py-3 pl-10 pr-4 text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 transition-all duration-300 text-sm`}
+                />
+              </div>
+              {validationErrors.email && (
+                <p className="text-rose-600 text-xs mt-1 flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-rose-500" />
+                  {validationErrors.email}
+                </p>
+              )}
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                Password
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                  <Lock className="h-4 w-4" />
+                </span>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Min 6 characters"
+                  className={`w-full bg-slate-50 border ${
+                    validationErrors.password ? 'border-rose-500' : 'border-slate-200'
+                  } rounded-xl py-3 pl-10 pr-4 text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 transition-all duration-300 text-sm`}
+                />
+              </div>
+              {validationErrors.password && (
+                <p className="text-rose-600 text-xs mt-1 flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-rose-500" />
+                  {validationErrors.password}
+                </p>
+              )}
+            </div>
+
+            {/* Role Field */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                Account Type
+              </label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-slate-800 focus:outline-none focus:border-emerald-500 transition-all duration-300 text-sm cursor-pointer"
+              >
+                <option value="customer">Customer (Reserve Tables)</option>
+                <option value="admin">Administrator (Manage System)</option>
+              </select>
+            </div>
+
+            {/* Admin Security Passcode Field */}
+            {formData.role === 'admin' && (
+              <div className="animate-scale-up">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                  Admin Security Passcode
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                    <ShieldAlert className="h-4 w-4" />
+                  </span>
+                  <input
+                    type="password"
+                    name="adminSecret"
+                    value={formData.adminSecret}
+                    onChange={handleChange}
+                    placeholder="Enter admin passcode"
+                    className={`w-full bg-slate-50 border ${
+                      validationErrors.adminSecret ? 'border-rose-500' : 'border-slate-200'
+                    } rounded-xl py-3 pl-10 pr-4 text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 transition-all duration-300 text-sm`}
+                  />
+                </div>
+                {validationErrors.adminSecret && (
+                  <p className="text-rose-600 text-xs mt-1 flex items-center gap-1.5">
+                    <span className="h-1 w-1 rounded-full bg-rose-500" />
+                    {validationErrors.adminSecret}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-4 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-emerald-500/10 flex items-center justify-center gap-2 text-sm disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed mt-2"
+            >
+              {loading ? (
+                <Spinner size="sm" className="!border-t-white" />
+              ) : (
+                'Sign Up'
+              )}
+            </button>
+          </form>
+
+          {/* Footer Link */}
+          <div className="mt-6 text-center border-t border-slate-100 pt-4">
+            <p className="text-sm text-slate-500">
+              Already have an account?{' '}
+              <Link
+                to="/login"
+                className="text-emerald-600 font-semibold hover:text-emerald-500 hover:underline transition-all"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

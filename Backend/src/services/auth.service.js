@@ -8,17 +8,25 @@ const generateToken = (user) =>
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   });
 
-const register = async ({ name, email, password, role }) => {
+const register = async ({ name, email, password, role, adminSecret }) => {
   const existing = await User.findOne({ email });
   if (existing) {
     throw new ApiError(409, 'An account with this email already exists.');
   }
 
-  // Only allow 'admin' role to be self-assigned during registration if
-  // explicitly requested - in a real system this would be gated further
-  // (e.g. invite code). For this assignment's scope we allow it so
-  // reviewers can create an admin account easily.
-  const finalRole = role === ROLES.ADMIN ? ROLES.ADMIN : ROLES.CUSTOMER;
+  let finalRole = ROLES.CUSTOMER;
+  if (role === ROLES.ADMIN) {
+    // 1. Enforce single-admin rule
+    const adminExists = await User.findOne({ role: ROLES.ADMIN });
+    if (adminExists) {
+      throw new ApiError(409, 'An administrator account already exists. Only one admin is allowed.');
+    }
+    // 2. Validate admin security code
+    if (adminSecret !== process.env.ADMIN_SECRET_KEY) {
+      throw new ApiError(403, 'Invalid Admin Security Key.');
+    }
+    finalRole = ROLES.ADMIN;
+  }
 
   const user = await User.create({ name, email, password, role: finalRole });
 

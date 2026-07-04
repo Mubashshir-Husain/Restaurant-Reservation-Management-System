@@ -1,1 +1,73 @@
+/* Google Fonts configuration */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;450;600;800;900&display=swap');
+
 @import "tailwindcss";
+
+:root {
+  font-family: 'Outfit', sans-serif;
+  color-scheme: light;
+}
+
+/* Custom Webkit scrollbar for light layout integration */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f8fafc; /* bg-slate-50 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* bg-slate-300 */
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* bg-slate-400 */
+}
+
+/* Custom Animation Classes & Keyframes */
+@keyframes slide-in {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scale-up {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-scale-up {
+  animation: scale-up 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-shake {
+  animation: shake 0.2s ease-in-out 0s 2;
+}
+
+.animate-fade-in {
+  animation: scale-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

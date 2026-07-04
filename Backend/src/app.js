@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import morgan from 'morgan';
 
 import authRoutes from './Routes/auth.routes.js';
 import tableRoutes from './Routes/table.routes.js';
@@ -16,9 +15,6 @@ app.use(
   })
 );
 app.use(express.json());
-if (process.env.NODE_ENV !== 'test') {
-  app.use(morgan('dev'));
-}
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({ success: true, message: 'API is healthy' });

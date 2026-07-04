@@ -1,3 +1,4 @@
+
 import 'dotenv/config';
 import app from './app.js';
 import connectDB from './Config/db.js';
@@ -14,6 +15,6 @@ const start = async () => {
 start();
 
 process.on('unhandledRejection', (err) => {
-  console.error(`[server] Unhandled Rejection: ${err.message}`);
+  console.error(`server Unhandled Rejection: ${err.message}`);
   process.exit(1);
 });
