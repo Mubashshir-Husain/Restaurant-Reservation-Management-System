@@ -1,4 +1,7 @@
 import mongoose from 'mongoose';
+import dns from "dns";
+
+dns.setServers(["8.8.8.8", "8.8.4.4"]); 
 
 const connectDB = async () => {
   try {
@@ -7,7 +10,9 @@ const connectDB = async () => {
       throw new Error('MONGO_URI is not defined in environment variables');
     }
 
-    await mongoose.connect(uri);
+    await mongoose.connect(uri, {
+      family: 4 // IPv4
+    });
     console.log('db MongoDB connected');
   } catch (err) {
     console.error(`db Connection error: ${err.message}`);
