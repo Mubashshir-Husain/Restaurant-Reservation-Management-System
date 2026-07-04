@@ -1,69 +1,19 @@
 # BistroReserve: Restaurant Reservation & Gourmet Portal
 
-BistroReserve is a full-stack, professional web application designed for premium dining spaces. It allows guests to discover gourmet recipes, search world cuisines, and reserve tables instantly. It also provides restaurant administrators with a secure console to manage table inventory and review client reservations.
+BistroReserve is a full-stack restaurant reservation portal and gourmet recipe explorer. Guests can discover dishes, view regional specialties, and book tables instantly. Administrators can manage the restaurant's table configuration, check incoming guest bookings, and edit reservations.
 
 ---
 
-## ⚙️ Key Features
-
-### 1. Guest & Discovery Features
-*   **Professional Landing Page:** Hero showcase, dining features, live visual statistics, and guest reviews.
-*   **Gourmet Dish Index (Menu):** Horizontal navigation bar supporting 37+ regional cuisines, search queries, and sliders highlighting general recommendations and Indian curry specialties.
-*   **Place Specialty Finder:** Responsive grids displaying recipes matching selected regions (e.g. Italian, French, Mexican).
-*   **Dish Detail Portal:** High-quality dish visuals, origin metadata, and table reservation shortcuts.
-
-### 2. Table Reservation Wizard
-*   **Dynamic Slot Allocation:** Guests choose dates, guests size, and active slots.
-*   **Table Picker:** Pick specific tables (e.g., T2, T8) or opt for "Auto-Assign" to let the system select the best-fitting spot.
-*   **Cancel Options:** Guests can cancel bookings directly from their reservation dashboard.
-
-### 3. Administrator Console
-*   **Table Inventory CRUD:** Create new tables, edit labels/capacities, or temporarily toggle a table's status (Active/Inactive).
-*   **Live Booking Board:** Filter all reservations by date to coordinate table setups and client arrivals.
-*   **Admin Cancellations:** Modify or cancel any reservation on behalf of guests.
-
-### 4. Enterprise Security Controls
-*   **Single-Admin Constraint:** Enforces a strict one-admin policy at the database level. Additional attempts to register administrator accounts are rejected.
-*   **Admin Passcode Gate:** Restricts administrator signups using a secure passcode verification key.
-*   **JWT Session Authorization:** Stateless cookie-based header tokens securing administrative actions.
-
-### 5. Automated Email Communications (Nodemailer)
-*   **Confirmation Mails:** Guests receive an immediate HTML-styled confirmation email upon booking.
-*   **24-Hour Reminders:** A background worker scans the database and sends reminder emails 24 hours before reservation time.
-*   **Developer Fallback (Ethereal):** If no SMTP settings are configured in `.env`, the system automatically provisions an Ethereal SMTP account and logs test-mail URLs in the console for instant browser previewing.
-
----
-
-## 🛠️ Tech Stack
-
-### Backend
-*   **Runtime:** Node.js (ES Modules syntax)
-*   **Framework:** Express.js
-*   **Database:** MongoDB via Mongoose ODM
-*   **Security:** JSON Web Tokens (JWT) & BcryptJS password hashing
-*   **Mailing:** Nodemailer & Ethereal SMTP
-
-### Frontend
-*   **Library:** React (Vite environment)
-*   **State Management:** Redux Toolkit & React-Redux
-*   **Routing:** React Router DOM
-*   **Styling:** Tailwind CSS (Light Mode layout, glassmorphic effects, Outfit typography)
-*   **Sliders:** React-Slick & Slick-Carousel
-*   **Icons:** Lucide-React
-
----
-
-## 🚀 Quick Start Guide
+## 🚀 Setup Instructions
 
 ### 1. Prerequisites
 Ensure you have the following installed locally:
 *   [Node.js](https://nodejs.org/) (v18+)
-*   [MongoDB](https://www.mongodb.com/) (Running locally on default port `27017` or a cloud-hosted URI)
+*   [MongoDB](https://www.mongodb.com/) (Running locally on the default port `27017` or via a cloud-hosted URI)
 
 ---
 
-### 2. Backend Installation & Launch
-
+### 2. Backend Setup
 1.  Navigate to the `Backend` directory:
     ```bash
     cd Backend
@@ -75,7 +25,7 @@ Ensure you have the following installed locally:
 3.  Configure environment variables by creating a `.env` file in the `Backend` directory:
     ```env
     PORT=5500
-    MONGO_URI=<YOUR_MONGODB_URI>
+    MONGO_URI=<YOUR_MONGODB_CONNECTION_URI>
     JWT_SECRET=<YOUR_JWT_SECRET_KEY>
     JWT_EXPIRES_IN=7d
     ADMIN_SECRET_KEY=<YOUR_ADMIN_REGISTRATION_PASSCODE>
@@ -87,7 +37,7 @@ Ensure you have the following installed locally:
     SMTP_PASS=<YOUR_SMTP_PASSWORD>
     SMTP_FROM="BistroReserve" <YOUR_SENDER_EMAIL>
     ```
-4.  Seed the reference restaurant tables:
+4.  Seed the reference restaurant tables in the database:
     ```bash
     npm run seed
     ```
@@ -99,8 +49,7 @@ Ensure you have the following installed locally:
 
 ---
 
-### 3. Frontend Installation & Launch
-
+### 3. Frontend Setup
 1.  Navigate to the `Frontend` directory:
     ```bash
     cd ../Frontend
@@ -122,24 +71,70 @@ Ensure you have the following installed locally:
 
 ---
 
-## 🔒 Verification & Test Scenarios
+## 📋 Assumptions Made
 
-### Test Scenario A: Registering as Admin
-1.  Go to Sign Up (`/register`).
-2.  Change Account Type to **Administrator**. An **Admin Security Passcode** field will display.
-3.  Enter an incorrect passcode -> submit -> expect error: `"Invalid Admin Security Key"`.
-4.  Enter the correct passcode configured as `ADMIN_SECRET_KEY` -> submit -> success! You are logged in and redirected to the Admin dashboard.
+1.  **Fixed Time Slots:** The restaurant operates on a fixed set of non-overlapping 90-minute time slots (e.g. 12:00, 13:30, 15:00, 19:00, 20:30, 22:00). Guests cannot book arbitrary custom timings (such as 12:15).
+2.  **Single Restaurant Location:** The system manages table capacity and bookings for a single location.
+3.  **Timezone Independence:** Dates are stored as plain strings in `YYYY-MM-DD` format and slot times as `HH:MM` strings, assuming bookings are processed relative to local restaurant time.
+4.  **Single Administrator Rule:** Only one administrator account is allowed to exist in the database at any given time to safeguard configuration access.
 
-### Test Scenario B: Single-Admin Constraint
-1.  Log out of the administrator account.
-2.  Go back to Sign Up (`/register`).
-3.  Try to register a *second* account with "Administrator" role and your correct passcode.
-4.  Submit -> expect error: `"An administrator account already exists. Only one admin is allowed."`
+---
 
-### Test Scenario C: Table Reservation & Email Logging
-1.  Register a standard **Customer** account.
-2.  Go to **Menu**, click any dish (e.g. *Matar Paneer*).
-3.  In the detail view, click **Book Dinner Session** to redirect to the booking workspace.
-4.  Select date, time slot, and guest count -> click **Check Availability**.
-5.  Choose a table (or *Auto-Assign*) and click **Confirm Reservation**.
-6.  Check the backend console. You will see a success log with an **Ethereal email preview link** (if not using custom SMTP) allowing you to inspect the HTML confirmation sent to your registered guest.
+## 🧠 Reservation & Availability Logic
+
+### 1. Overlap Calculations
+To check if two slots conflict, the system converts time strings (e.g., `"13:30"`) into minutes since midnight. Two intervals `[aStart, aEnd)` and `[bStart, bEnd)` overlap if:
+$$\text{Overlap} = (\text{aStart} < \text{bEnd}) \land (\text{bStart} < \text{aEnd})$$
+Where the default slot duration is set to 90 minutes.
+
+### 2. Availability Wizard
+When a guest queries available tables for a date and slot:
+1.  The database fetches all active tables with a seating capacity greater than or equal to the requested guest size: `capacity >= guests`.
+2.  It queries all confirmed reservations for the selected date and filters out tables with overlapping reservation slots.
+3.  The remaining tables are returned to the frontend as available options.
+
+### 3. Smart Auto-Assignment
+If a guest does not select a specific table, the system auto-assigns the **smallest suitable table** that fits the party size. This preserves larger tables for larger groups.
+
+### 4. Concurrency Safety
+A unique compound database index is defined on `{ table: 1, date: 1, timeSlot: 1 }` filtered by `status: "confirmed"`. If two users concurrently attempt to book the same table/slot, the database rejects the second request, preventing double bookings.
+
+---
+
+## 👥 Role-Based Access (User vs Admin)
+
+*   **Guest/Visitor:** Can view the landing page, browse recipe lists, filter by cuisine, and explore dish details. Must register or log in to make reservations.
+*   **Customer (User):** Can access the booking wizard, check table availability, confirm reservations, and cancel their own bookings.
+*   **Administrator (Admin):** 
+    *   Can add, edit, or delete tables from the database.
+    *   Can view all reservations, filter them by date, modify reservation settings, or cancel bookings on behalf of guests.
+
+**Technical Enforcement:**
+*   *Backend:* Middlewares (`requireAuth` and `requireAdmin`) intercept requests, verify the JWT, check the user's role in the database, and block unauthorized API access.
+*   *Frontend:* The `Dashboard` component checks the logged-in user's profile role and dynamically renders either the `CustomerPanel` or the `AdminPanel`.
+
+---
+
+## ✉️ Email Confirmations & Reminders (Nodemailer)
+
+*   **Instant Confirmation:** When a booking is confirmed, the system immediately dispatches an HTML-formatted confirmation email containing reservation details (date, slot, guest count, table label).
+*   **24-Hour Reminder Scanner:** A background worker runs periodically on the server (default: every 5 minutes). It scans the database for confirmed bookings scheduled within the next 24 hours. If found, it emails a friendly dining reminder to the guest.
+*   **Spam Prevention:** If a user makes a reservation less than 24 hours in advance, the system automatically flags `reminderSent: true` on creation. This prevents sending a redundant reminder email right after the confirmation email.
+
+---
+
+## ⚠️ Known Limitations
+
+1.  **No Table Merging:** The system cannot automatically combine smaller adjacent tables (e.g., merging two 2-seat tables for a party of 4). Bookings must fit onto a single table.
+2.  **Static Pre-Set Slots:** Guests cannot specify custom durations or custom booking times.
+3.  **Local SMTP Preview:** If custom SMTP credentials are omitted, emails are routed to a mock Ethereal test inbox, and preview URLs are logged in the backend terminal instead of sending to real emails.
+
+---
+
+## 💡 Areas for Improvement (with more time)
+
+1.  **Dynamic Table-Grouping Algorithm:** Implement logic to automatically merge smaller adjacent tables for larger guest counts when large tables are fully booked.
+2.  **Flexible Booking Hours:** Allow guests to book arbitrary times and durations with dynamic slot calculation.
+3.  **Real-Time Dashboard Updates:** Integrate WebSockets (Socket.io) to push instant notifications to the Admin board when bookings are made or cancelled.
+4.  **Multi-Location / Venue Support:** Expand schemas to manage capacities across multiple restaurant branches.
+5.  **Interactive Seating Map:** Build a visual floor plan in the frontend allowing guests to click and select tables visually.
