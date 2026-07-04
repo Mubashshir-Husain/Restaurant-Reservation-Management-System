@@ -86,125 +86,62 @@ export default function RecipeDetail() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-fade-in">
+          <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
             
-            {/* Left Panel: visual presentation & CTA */}
-            <div className="lg:col-span-5 space-y-6">
-              <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm overflow-hidden">
-                <div className="rounded-2xl overflow-hidden border border-slate-100 shadow-md mb-5">
-                  <img
-                    src={meal.strMealThumb}
-                    alt={meal.strMeal}
-                    className="w-full h-80 object-cover"
-                  />
-                </div>
-
-                <div className="space-y-4 text-left">
-                  <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">
-                    {meal.strMeal}
-                  </h1>
-
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    <span className="flex items-center gap-1 bg-slate-50 border border-slate-200 text-slate-655 px-3 py-1 rounded-full">
-                      <Compass className="h-3.5 w-3.5 text-emerald-600" />
-                      {meal.strArea} Origin
-                    </span>
-                    <span className="flex items-center gap-1 bg-slate-50 border border-slate-200 text-slate-655 px-3 py-1 rounded-full">
-                      <Tag className="h-3.5 w-3.5 text-emerald-650" />
-                      {meal.strCategory}
-                    </span>
-                  </div>
-
-                  {meal.strTags && (
-                    <p className="text-[11px] text-slate-400 mt-2 font-medium">
-                      Tags: <span className="italic text-slate-550">{meal.strTags.split(',').join(', ')}</span>
-                    </p>
-                  )}
-                </div>
+            {/* Visual presentation & details */}
+            <div className="bg-white border border-slate-205 p-5 sm:p-6 rounded-3xl shadow-sm overflow-hidden">
+              <div className="rounded-2xl overflow-hidden border border-slate-100 shadow-md mb-6">
+                <img
+                  src={meal.strMealThumb}
+                  alt={meal.strMeal}
+                  className="w-full h-96 object-cover"
+                />
               </div>
 
-              {/* Table Booking Shortcut CTA Card */}
-              <div className="bg-emerald-600 text-white rounded-3xl p-6 shadow-lg shadow-emerald-600/10 text-left space-y-4 relative overflow-hidden">
-                {/* Visual Accent */}
-                <div className="absolute top-[-30px] right-[-30px] w-24 h-24 bg-white/5 rounded-full pointer-events-none" />
+              <div className="space-y-4 text-left">
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-tight">
+                  {meal.strMeal}
+                </h1>
 
-                <div className="bg-white/10 p-3 rounded-2xl w-fit">
-                  <CalendarRange className="h-6 w-6 text-white" />
+                <div className="flex flex-wrap gap-2 text-xs">
+                  <span className="flex items-center gap-1 bg-slate-50 border border-slate-200 text-slate-655 px-3 py-1 rounded-full">
+                    <Compass className="h-3.5 w-3.5 text-emerald-600" />
+                    {meal.strArea} Origin
+                  </span>
+                  <span className="flex items-center gap-1 bg-slate-50 border border-slate-200 text-slate-655 px-3 py-1 rounded-full">
+                    <Tag className="h-3.5 w-3.5 text-emerald-650" />
+                    {meal.strCategory}
+                  </span>
                 </div>
-                <div>
-                  <h3 className="text-lg font-black tracking-tight">Reserve a Table</h3>
-                  <p className="text-emerald-100 text-xs mt-1 leading-relaxed">
-                    Would you love to taste this specialty at our restaurant? Secure your dining table and slot instantly below.
+
+                {meal.strTags && (
+                  <p className="text-[11px] text-slate-400 mt-2 font-medium">
+                    Tags: <span className="italic text-slate-550">{meal.strTags.split(',').join(', ')}</span>
                   </p>
-                </div>
-                <button
-                  onClick={() => navigate('/dashboard')}
-                  className="w-full bg-white hover:bg-emerald-50 text-emerald-705 font-bold py-3 rounded-xl transition-all duration-300 text-sm cursor-pointer shadow-md flex items-center justify-center gap-2"
-                >
-                  Book Dinner Session
-                </button>
+                )}
               </div>
             </div>
 
-            {/* Right Panel: Walkthrough directions & ingredients grid */}
-            <div className="lg:col-span-7 space-y-6 text-left">
-              
-              {/* Ingredients List */}
-              <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
-                <h3 className="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">
-                  Ingredients Needed
-                </h3>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  {getIngredientsList().map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-2.5 bg-slate-50 border border-slate-200/60 p-3 rounded-xl">
-                      <CheckCircle className="h-4.5 w-4.5 text-emerald-600 flex-shrink-0" />
-                      <div className="text-xs">
-                        <p className="font-bold text-slate-800">{item.ingredient}</p>
-                        <p className="text-slate-500 mt-0.5">{item.measure}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            {/* Table Booking Shortcut CTA Card */}
+            <div className="bg-emerald-600 text-white rounded-3xl p-6 sm:p-8 shadow-lg shadow-emerald-600/10 text-left space-y-4 relative overflow-hidden">
+              {/* Visual Accent */}
+              <div className="absolute top-[-30px] right-[-30px] w-24 h-24 bg-white/5 rounded-full pointer-events-none" />
+
+              <div className="bg-white/10 p-3 rounded-2xl w-fit">
+                <CalendarRange className="h-6 w-6 text-white" />
               </div>
-
-              {/* Step-by-Step Instructions */}
-              <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-5 pb-2 border-b border-slate-100">
-                  <h3 className="text-lg font-bold text-slate-900">
-                    Preparation Instructions
-                  </h3>
-                  
-                  {meal.strYoutube && (
-                    <a
-                      href={meal.strYoutube}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-605 border border-rose-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all"
-                    >
-                      <Video className="h-4 w-4 text-rose-500" />
-                      Watch Video Tutorial
-                    </a>
-                  )}
-                </div>
-
-                <div className="space-y-4">
-                  {meal.strInstructions
-                    .split(/\r?\n/)
-                    .filter((step) => step.trim().length > 10)
-                    .map((step, idx) => (
-                      <div key={idx} className="flex gap-4">
-                        <div className="bg-slate-50 text-slate-455 font-black text-xs h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0 border border-slate-200">
-                          {idx + 1}
-                        </div>
-                        <p className="text-slate-650 text-xs sm:text-sm leading-relaxed pt-0.5">
-                          {step}
-                        </p>
-                      </div>
-                    ))}
-                </div>
+              <div>
+                <h3 className="text-xl font-black tracking-tight">Reserve a Table</h3>
+                <p className="text-emerald-100 text-xs sm:text-sm mt-1 leading-relaxed">
+                  Would you love to taste this specialty at our restaurant? Secure your dining table and slot instantly below.
+                </p>
               </div>
-
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="w-full bg-white hover:bg-emerald-50 text-emerald-700 font-bold py-3.5 rounded-xl transition-all duration-300 text-sm cursor-pointer shadow-md flex items-center justify-center gap-2"
+              >
+                Book Dinner Session
+              </button>
             </div>
 
           </div>

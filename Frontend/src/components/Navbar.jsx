@@ -31,7 +31,7 @@ export default function Navbar() {
         <div className="bg-emerald-500/10 p-2 rounded-xl border border-emerald-500/25">
           <Utensils className="h-6 w-6 text-emerald-650" />
         </div>
-        <span className="text-xl font-black text-slate-900 tracking-tight bg-gradient-to-r from-slate-900 to-emerald-650 bg-clip-text text-transparent">
+        <span className="text-xl font-black text-slate-900 tracking-tight bg-clip-text">
           BistroReserve
         </span>
       </div>
